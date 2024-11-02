@@ -1,4 +1,4 @@
-repo_name:= cicdlearn
+repo_name:= asadlive84
 image_name:=todo-backend
 tag_name:=v1.1
 
