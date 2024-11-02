@@ -221,7 +221,8 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func main() {
-	db, err := sql.Open("postgres", "postgres://postgres:password@localhost/todo?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:password@postgres/todo?sslmode=disable")
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -245,7 +246,6 @@ func main() {
 
 	app := &App{DB: db}
 	router := mux.NewRouter()
-
 
 	router.HandleFunc("/api/todos", app.getTodos).Methods("GET")
 	router.HandleFunc("/api/todos/{id}", app.getTodo).Methods("GET")
