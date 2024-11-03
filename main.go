@@ -247,6 +247,10 @@ func main() {
 	app := &App{DB: db}
 	router := mux.NewRouter()
 
+	// Apply CORS middleware
+	router.Use(mux.CORSMethodMiddleware(router)) // Only required if you want to allow specific methods
+	router.Use(corsMiddleware)                   // Apply the custom CORS middleware
+
 	router.HandleFunc("/api/todos", app.getTodos).Methods("GET")
 	router.HandleFunc("/api/todos/{id}", app.getTodo).Methods("GET")
 	router.HandleFunc("/api/todos", app.createTodo).Methods("POST")
@@ -260,4 +264,20 @@ func main() {
 
 	log.Printf("Server starting on port %s", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
+}
+
+// CORS middleware to set headers
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			return
+		}
+
+		next.ServeHTTP(w, r) // Call the next handler
+	})
 }

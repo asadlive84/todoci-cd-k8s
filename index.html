@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List with Vue.js</title>
+    <!-- Include Vue.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>Task List</h1>
+        <ul>
+            <li v-for="task in tasks" :key="task.id">
+                {{ task.title }} - Completed: {{ task.completed ? 'Yes' : 'No' }}
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        // Create a Vue app
+        const app = Vue.createApp({
+            data() {
+                return {
+                    tasks: []
+                };
+            },
+            created() {
+                this.fetchTasks();
+            },
+            methods: {
+                async fetchTasks() {
+                    try {
+                        // Replace 'YOUR_API_GATEWAY_URL' with your actual API endpoint URL
+                        const response = await fetch('http://localhost:8080/api/todos');
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        this.tasks = await response.json();
+                    } catch (error) {
+                        console.error('Failed to fetch tasks:', error);
+                    }
+                }
+            }
+        });
+
+        // Mount the Vue app to the #app element
+        app.mount('#app');
+    </script>
+</body>
+</html>
